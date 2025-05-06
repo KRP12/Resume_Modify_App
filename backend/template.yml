@@ -1,0 +1,100 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Resume Matching Application - Deploys Lambda, S3 Buckets, IAM Roles
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: python3.11
+    MemorySize: 512
+
+Resources:
+
+  ######################
+  # S3 Buckets
+  ######################
+
+  ResumeUploadsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "resume-uploads-${050752609165}-${us-east-1}"
+
+  ResumeOutputBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "resume-outputs-${050752609165}-${us-east-1}"
+
+  ######################
+  # Lambda Execution Role
+  ######################
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "resume-lambda-role-${AWS::StackName}"
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: ResumeLambdaPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource:
+                  - !Sub "arn:aws:s3:::${ResumeUploadsBucket}/*"
+                  - !Sub "arn:aws:s3:::${ResumeOutputBucket}/*"
+              - Effect: Allow
+                Action:
+                  - sagemaker:InvokeEndpoint
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+
+  ######################
+  # Lambda Function
+  ######################
+
+  ResumeProcessorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "resume-processor-${AWS::StackName}"
+      Handler: app.lambda_handler
+      CodeUri: .
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          UPLOADS_BUCKET: !Ref ResumeUploadsBucket
+          OUTPUT_BUCKET: !Ref ResumeOutputBucket
+          SAGEMAKER_ENDPOINT: "resume-improver-t5-endpoint"
+      Events:
+        S3UploadEvent:
+          Type: S3
+          Properties:
+            Bucket: !Ref ResumeUploadsBucket
+            Events: s3:ObjectCreated:*
+
+Outputs:
+  LambdaFunctionName:
+    Description: Name of the Lambda function
+    Value: !Ref ResumeProcessorFunction
+
+  UploadsBucketName:
+    Description: S3 Bucket for uploads
+    Value: !Ref ResumeUploadsBucket
+
+  OutputBucketName:
+    Description: S3 Bucket for resume improvements
+    Value: !Ref ResumeOutputBucket
