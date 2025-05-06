@@ -1,0 +1,93 @@
+/* Global Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+  }
+  
+  h1, h2, h3 {
+    text-align: center;
+    color: #2c3e50;
+  }
+  
+  .App {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  
+  /* Upload Form */
+  .upload-resume-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  label {
+    font-weight: 600;
+  }
+  
+  input[type="file"],
+  textarea {
+    padding: 0.6rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    width: 100%;
+  }
+  
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  button {
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    background-color: #1d72b8;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #155a96;
+  }
+  
+  button:disabled {
+    background-color: #a5b3c2;
+    cursor: not-allowed;
+  }
+  
+  /* Output Section */
+  .result-resume {
+    margin-top: 2rem;
+    background-color: #f4f4f4;
+    padding: 1rem;
+    border-left: 4px solid #007bff;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    font-family: "Courier New", Courier, monospace;
+  }
+  
+  /* Error */
+  .error {
+    color: #e74c3c;
+    font-weight: 600;
+    margin-top: 1rem;
+  }
+  

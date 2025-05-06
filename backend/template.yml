@@ -18,12 +18,12 @@ Resources:
   ResumeUploadsBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "resume-uploads-${050752609165}-${us-east-1}"
+      BucketName: !Sub "resume-uploads-${Account-ID}-${region}"
 
   ResumeOutputBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "resume-outputs-${050752609165}-${us-east-1}"
+      BucketName: !Sub "resume-outputs-${Account-ID}-${region}"
 
   ######################
   # Lambda Execution Role
